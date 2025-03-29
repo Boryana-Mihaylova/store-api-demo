@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commons::head}"></head>
+<body>
+<header th:replace="~{fragments/commons::nav}"></header>
+<main>
+    <form class="welcome add-offer-form" th:method="POST" th:action="@{/reviews}" th:object="${createReview}">
+        <h1 class="text-center mt-2"><span class="badge badge-pill badge-dark">Add Review</span></h1>
+
+        <div class="form-group">
+            <div class="label-holder text-white textCol d-flex justify-content-center">
+                <label for="ownerItem" class="h4 mb-2">OwnerItem</label>
+            </div>
+            <input type="text" class="form-control" id="ownerItem" name="ownerItem" value="" th:field="*{ownerItem}"/>
+            <small th:if="${#fields.hasErrors('ownerItem')}" th:errors="*{ownerItem}" class="bg-danger text-light rounded">OwnerItem error message</small>
+        </div>
+
+        <div class="form-group">
+            <div class="label-holder text-white textCol d-flex justify-content-center">
+                <label for="description" class="h4 mb-2">Description</label>
+            </div>
+            <input type="text"  class="form-control" id="description" name="description" value="" th:field="*{description}"/>
+            <small th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="bg-danger text-light rounded">Description error message</small>
+        </div>
+
+        <div class="button-holder d-flex justify-content-center">
+            <button type="submit" class="btn btn-info  mb-3">Add Review</button>
+        </div>
+
+    </form>
+</main>
+<footer class="footer bg-transparent py-2">
+    <div class="container-fluid text-center">
+        <div class="footer-background footer-text fixed-bottom">
+            &copy; 2025 FriendlyLend. All rights reserved.
+        </div>
+    </div>
+</footer>
+</body>
+</html>
