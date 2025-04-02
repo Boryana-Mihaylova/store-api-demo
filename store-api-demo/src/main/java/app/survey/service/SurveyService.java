@@ -4,16 +4,14 @@ package app.survey.service;
 import app.survey.client.SurveyClient;
 
 
-import app.survey.client.dto.SurveyPreference;
-
+import app.survey.client.dto.Subject;
+import app.survey.client.dto.Support;
+import app.survey.client.dto.Survey;
 import app.survey.client.dto.SurveyRequest;
-
-import app.survey.client.dto.UpsertSurveyPreference;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 
@@ -31,62 +29,36 @@ public class SurveyService {
         this.surveyClient = surveyClient;
     }
 
+    public Survey submitSurvey(SurveyRequest surveyRequest) {
 
+        Subject surveySubject = Subject.valueOf(surveyRequest.getSubject().toUpperCase());
+        Support surveySupport = Support.valueOf(surveyRequest.getSupport().toUpperCase());
 
-    public void saveSurveyPreference(UUID userId, String subject, String support) {
+        Survey survey = new Survey();
+        survey.setSubject(surveySubject.toString());
+        survey.setSupport(surveySupport.toString());
+        survey.setUserId(surveyRequest.getUserId());
 
-        UpsertSurveyPreference surveyPreference = UpsertSurveyPreference.builder()
-                .userId(userId)
-                .subject(subject)
-                .support(support)
-                .build();
-
-        // Invoke Feign client and execute HTTP Post Request.
-        try {
-            ResponseEntity<Void> httpResponse = surveyClient.upsertSurveyPreference(surveyPreference);
-            if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-                log.error("[Feign call to svc-demo failed] Can't save user preference for user with id = [%s]".formatted(userId));
-            }
-        } catch (Exception e) {
-            log.error("Unable to call svc-demo.");
-        }
-    }
-
-    public SurveyPreference getSurveyPreference(UUID userId) {
-
-        UpsertSurveyPreference surveyPreference = UpsertSurveyPreference.builder()
-                .userId(userId)
-
-                .build();
-
-        ResponseEntity<SurveyPreference> httpResponse = surveyClient.getUserPreference(userId);
-
-        if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Survey preference for user id [%s] does not exist.".formatted(userId));
-        }
-
-        return httpResponse.getBody();
+        // Изпращаш данните към Survey API
+        return surveyClient.submitSurvey(survey);
     }
 
 
-    public void sendSurvey(UUID userId, String subject, String support) {
-
-        SurveyRequest surveyRequest = SurveyRequest.builder()
-                .userId(userId)
-                .subject(subject)
-                .support(support)
-                .build();
-
-        // Servive to Service
-        ResponseEntity<Void> httpResponse;
-        try {
-            httpResponse = surveyClient.sendSurvey(surveyRequest);
-            if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-                log.error("[Feign call to svc-demo failed] Can't send email to user with id = [%s]".formatted(userId));
-            }
-        } catch (Exception e) {
-            log.warn("Can't send email to user with id = [%s] due to 500 Internal Server Error.".formatted(userId));
-        }
+    public Survey getSurvey(UUID userId) {
+        // Изпраща GET заявка към REST API-то за получаване на анкета по userId
+        return surveyClient.getSurvey(userId);
     }
+
+
+
+
+
+//    public List<Survey> getAllSurveyRequests() {
+//        // Извикваме метод за извличане на всички избори от svc-demo
+//        ResponseEntity<List<Survey>> httpResponse = surveyClient.getAllSurveys();
+//
+//        // Преобразуваме резултатите от Survey в SurveyRequest
+//        return httpResponse.getBody();
+//    }
 
 }

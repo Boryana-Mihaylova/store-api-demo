@@ -10,25 +10,25 @@
         <div class="row mt-1 mb-2">
             <div class="col-12 mt-1 mb-1">
                 <div class="my-closet">
-                    <h2>My Delivery Location</h2>
+                    <h2>Supports</h2>
 
-
+                    <!-- Списък с всички артикули на други потребители -->
                     <div class="home-fields" style="height: 80vh; overflow: auto">
                         <table class="my-table table-striped table-dark">
                             <thead>
                             <tr>
-                                <th>Delivery Location</th>
-                                <th>Town</th>
+                                <th>Subject</th>
+                                <th>Support</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <!-- Чрез this we loop през всички артикули на потребителя -->
-                            <tr th:each="location : ${locations}">
+                            <!-- Чрез this we loop през всички артикули, които не са на текущия потребител -->
+                            <tr th:each="survey : ${supportRequests}">
                                 <td>
-                                    <span th:text="${location.getLocation()}"></span>
+                                    <span th:text="${survey.subjcet}"></span>
                                 </td>
                                 <td>
-                                    <span th:text="${location.getTown()}"></span>
+                                    <span th:text="${survey.support}"></span>
                                 </td>
                             </tr>
                             </tbody>
@@ -47,5 +47,3 @@
         </div>
     </div>
 </footer>
-</body>
-</html>

@@ -5,26 +5,29 @@
 <body>
 <header th:replace="~{fragments/commons::nav}"></header>
 <main>
-    <form class="welcome add-offer-form" th:method="POST" th:action="@{/surveys}" th:object="${surveyPreference}">
+    <form class="welcome add-offer-form" th:method="POST" th:action="@{/surveys/}" th:object="${surveyRequest}">
         <h1 class="text-center mt-2"><span class="badge badge-pill badge-dark">Support Eco Survey</span></h1>
 
-        <div class="details-section">
-            <div class="details-section-container">
-                <strong>Survey subject: </strong>
-                <p th:text="${surveyPreference.subject}"></p>
-            </div>
         </div>
+        <select class="browser-default custom-select" id="subject" name="subject" th:field="*{subject}">
+            <option th:each="subject : ${T(app.survey.client.dto.Subject).values()}" th:value="${subject}" th:text="${subject}"></option>
 
-        <div class="details-section">
-            <div class="details-section-container">
-                <strong>Survey support: </strong>
-                <p th:text="${surveyPreference.support}"></p>
-            </div>
+        </select>
+        <small th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}" class="bg-danger text-light rounded">Subject error message</small>
+
+        </div>
+        </div>
+        <select class="browser-default custom-select" id="support" name="support" th:field="*{support}">
+            <option th:each="support : ${T(app.survey.client.dto.Support).values()}" th:value="${support}" th:text="${support}"></option>
+
+        </select>
+        <small th:if="${#fields.hasErrors('support')}" th:errors="*{support}" class="bg-danger text-light rounded">Support error message</small>
+
         </div>
 
         </div>
         <div class="button-holder d-flex justify-content-center">
-            <button type="submit" class="btn btn-info  mb-3">Support Survey</button>
+            <button type="submit" class="btn btn-info  mb-3">Support</button>
         </div>
     </form>
 </main>

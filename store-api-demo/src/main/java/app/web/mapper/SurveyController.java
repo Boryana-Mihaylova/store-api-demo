@@ -3,16 +3,19 @@ package app.web.mapper;
 
 
 import app.security.AuthenticationMetadata;
-import app.survey.client.dto.SurveyPreference;
 
+import app.survey.client.dto.Survey;
+import app.survey.client.dto.SurveyRequest;
 import app.survey.service.SurveyService;
-import app.user.model.User;
+
 import app.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.UUID;
 
 
 @Controller
@@ -29,31 +32,54 @@ public class SurveyController {
     }
 
 
-    @PutMapping("/user-support")
-    public String createUserPreference(@RequestParam(name = "support") String support, String subject, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
-        surveyService.sendSurvey(authenticationMetadata.getUserId(), subject, support);
+    @GetMapping("/newSurvey")
+    public ModelAndView getNewSurveyPage(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
 
-        return "redirect:/user-survey";
-    }
+        UUID userId = authenticationMetadata.getUserId();
 
 
-    @GetMapping
-    public ModelAndView getSurveyPage(@AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
-
-        User user = userService.getById(authenticationMetadata.getUserId());
-
-        SurveyPreference surveyPreference = surveyService.getSurveyPreference(user.getId());
-
-
-        ModelAndView modelAndView = new ModelAndView("user-survey");
-        modelAndView.addObject("user", user);
-        modelAndView.addObject("surveyPreference", surveyPreference);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("user-support");
+        modelAndView.addObject("userId", userId);
+        modelAndView.addObject("surveyRequest", SurveyRequest.builder().build());
 
         return modelAndView;
     }
 
 
+    @PostMapping
+    public String submitSurvey(@RequestParam("subject") String subject,
+                               @RequestParam("support") String support,
+                               @RequestParam("userId") UUID userId, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+
+
+
+        SurveyRequest surveyRequest = new SurveyRequest();
+        surveyRequest.setSubject(subject);
+        surveyRequest.setSupport(support);
+        surveyRequest.setUserId(userId);
+
+        Survey survey = surveyService.submitSurvey(surveyRequest);
+        UUID surveyId = survey.getId();
+
+        return "redirect:/surveys/user-survey";
+
+
+    }
+
+
+    @GetMapping("/user-survey")
+    public ModelAndView getSurvey(@RequestParam(name = "userId") UUID userId, @AuthenticationPrincipal AuthenticationMetadata authenticationMetadata) {
+
+        Survey survey = surveyService.getSurvey(authenticationMetadata.getUserId());
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("user-survey");
+        modelAndView.addObject("survey", survey);
+
+        return modelAndView;
+    }
 
 }
 

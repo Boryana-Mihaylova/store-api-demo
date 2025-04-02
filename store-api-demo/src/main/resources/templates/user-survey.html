@@ -6,7 +6,7 @@
 <header th:replace="~{fragments/commons::nav}"></header>
 <main>
     <div class="welcome mt-1 mb-4">
-        <p class="mySticky bg-gray text-dark user" th:text="${'Welcome ' + user.username}"></p>
+
         <div class="row mt-1 mb-2">
             <div class="col-12 mt-1 mb-1">
                 <div class="my-closet">
@@ -18,17 +18,17 @@
                             <thead>
                             <tr>
                                 <th>ECO SURVEY</th>
-                                <th>Support</th>
+                                <th>Opinion</th>
                             </tr>
                             </thead>
                             <tbody>
                                 <div class="details-section-container">
                                     <strong>Survey subject: </strong>
-                                <p th:text="${surveyPreference.subject}"></p>
+                                <p th:text="${surveyRequest.subject}"></p>
                                 </div>
                                 <div class="details-section-container">
                                     <strong>Survey support: </strong>
-                                    <p th:text="${surveyPreference.support}"></p>
+                                    <p th:text="${surveyRequest.support}"></p>
                                 </div>
                             </tr>
                             </tbody>
